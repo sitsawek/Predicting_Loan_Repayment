@@ -1,0 +1,233 @@
+> #  Load data from LendingClub.com, a website that connects borrowers and investors over the Internet. 
+> # This dataset represents 9,578 3-year loans that were funded through the LendingClub.com platform between May 2007 and February 2010.
+> l = read.csv("loans.csv")
+> #What proportion of the loans in the dataset were not paid in full?
+> table(l$not.fully.paid)
+
+   0    1 
+8045 1533 
+> 1533/(8045+1533)
+[1] 0.1600543
+> summary(l)
+ credit.policy                 purpose        int.rate       installment     log.annual.inc        dti              fico       days.with.cr.line   revol.bal         revol.util     inq.last.6mths    delinq.2yrs     
+ Min.   :0.000   all_other         :2331   Min.   :0.0600   Min.   : 15.67   Min.   : 7.548   Min.   : 0.000   Min.   :612.0   Min.   :  179     Min.   :      0   Min.   :  0.00   Min.   : 0.000   Min.   : 0.0000  
+ 1st Qu.:1.000   credit_card       :1262   1st Qu.:0.1039   1st Qu.:163.77   1st Qu.:10.558   1st Qu.: 7.213   1st Qu.:682.0   1st Qu.: 2820     1st Qu.:   3187   1st Qu.: 22.70   1st Qu.: 0.000   1st Qu.: 0.0000  
+ Median :1.000   debt_consolidation:3957   Median :0.1221   Median :268.95   Median :10.928   Median :12.665   Median :707.0   Median : 4140     Median :   8596   Median : 46.40   Median : 1.000   Median : 0.0000  
+ Mean   :0.805   educational       : 343   Mean   :0.1226   Mean   :319.09   Mean   :10.932   Mean   :12.607   Mean   :710.8   Mean   : 4562     Mean   :  16914   Mean   : 46.87   Mean   : 1.572   Mean   : 0.1638  
+ 3rd Qu.:1.000   home_improvement  : 629   3rd Qu.:0.1407   3rd Qu.:432.76   3rd Qu.:11.290   3rd Qu.:17.950   3rd Qu.:737.0   3rd Qu.: 5730     3rd Qu.:  18250   3rd Qu.: 71.00   3rd Qu.: 2.000   3rd Qu.: 0.0000  
+ Max.   :1.000   major_purchase    : 437   Max.   :0.2164   Max.   :940.14   Max.   :14.528   Max.   :29.960   Max.   :827.0   Max.   :17640     Max.   :1207359   Max.   :119.00   Max.   :33.000   Max.   :13.0000  
+                 small_business    : 619                                     NA's   :4                                         NA's   :29                          NA's   :62       NA's   :29       NA's   :29       
+    pub.rec       not.fully.paid  
+ Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.0000   1st Qu.:0.0000  
+ Median :0.0000   Median :0.0000  
+ Mean   :0.0621   Mean   :0.1601  
+ 3rd Qu.:0.0000   3rd Qu.:0.0000  
+ Max.   :5.0000   Max.   :1.0000  
+ NA's   :29  
+> # We will see a lot of missing value in data set.
+> # We want fill in the missing values for these variables instead of removing observations with missing data.
+> # Because we want to be able to predict risk for all borrowers, instead of just the ones with all data reported.    
+> library(mice)
+> set.seed(144)
+> vars.for.imputation = setdiff(names(l),"not.fully.paid")
+> imputed = complete(mice(l[vars.for.imputation]))
+
+ iter imp variable
+  1   1  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  1   2  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  1   3  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  1   4  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  1   5  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  2   1  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  2   2  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  2   3  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  2   4  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  2   5  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  3   1  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  3   2  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  3   3  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  3   4  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  3   5  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  4   1  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  4   2  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  4   3  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  4   4  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  4   5  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  5   1  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  5   2  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  5   3  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  5   4  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+  5   5  log.annual.inc  days.with.cr.line  revol.util  inq.last.6mths  delinq.2yrs  pub.rec
+> l[vars.for.imputation]=imputed
+> # We predicted missing variable values using the available independent variables for each observation.
+> # Now split train set and test set.
+> set.seed(144)
+> library(caTools)
+> split = sample.split(l$not.fully.paid,SplitRatio = 0.7)
+> train = subset(l, split ==TRUE)
+> test = subset(l,split == FALSE)
+> dim(train)
+[1] 6705   14
+> dim(test)
+[1] 2873   14
+> # Build model1 to predict dependent variable with all independent variable.
+> mod1 = glm(not.fully.paid~.,data = train,family = binomial)
+> summary(mod1)
+
+Call:
+glm(formula = not.fully.paid ~ ., family = binomial, data = train)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.2100  -0.6209  -0.4948  -0.3606   2.6425  
+
+Coefficients:
+                            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)                9.127e+00  1.556e+00   5.864 4.51e-09 ***
+credit.policy             -3.317e-01  1.010e-01  -3.285  0.00102 ** 
+purposecredit_card        -6.146e-01  1.345e-01  -4.571 4.86e-06 ***
+purposedebt_consolidation -3.217e-01  9.183e-02  -3.503  0.00046 ***
+purposeeducational         1.361e-01  1.753e-01   0.776  0.43757    
+purposehome_improvement    1.745e-01  1.480e-01   1.179  0.23827    
+purposemajor_purchase     -4.821e-01  2.009e-01  -2.399  0.01642 *  
+purposesmall_business      4.136e-01  1.419e-01   2.915  0.00356 ** 
+int.rate                   5.515e-01  2.085e+00   0.264  0.79140    
+installment                1.277e-03  2.093e-04   6.101 1.06e-09 ***
+log.annual.inc            -4.339e-01  7.151e-02  -6.068 1.29e-09 ***
+dti                        4.583e-03  5.502e-03   0.833  0.40484    
+fico                      -9.237e-03  1.711e-03  -5.400 6.66e-08 ***
+days.with.cr.line          1.273e-06  1.588e-05   0.080  0.93610    
+revol.bal                  3.095e-06  1.169e-06   2.647  0.00812 ** 
+revol.util                 2.047e-03  1.532e-03   1.336  0.18165    
+inq.last.6mths             8.608e-02  1.591e-02   5.409 6.32e-08 ***
+delinq.2yrs               -7.626e-02  6.534e-02  -1.167  0.24319    
+pub.rec                    3.306e-01  1.139e-01   2.903  0.00370 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 5896.6  on 6704  degrees of freedom
+Residual deviance: 5483.9  on 6686  degrees of freedom
+AIC: 5521.9
+
+Number of Fisher Scoring iterations: 5
+
+> #Consider A has FICO credit score 700 while the borrower in Application B has FICO credit score 710.
+> #What is the value of Logit(A) - Logit(B)?
+> #As we can see difference between A and B equal 10.
+> #And coefficient of fico is -9.237e-03.
+> #Then
+> -9.237e-03 *-10
+[1] 0.09237
+> # And ODDS is
+> exp(0.09237)
+[1] 1.096771
+> # Now let's predict with test set.
+> pred = predict(mod1,newdata = test ,type = "response")
+> # Find accuracy by use threshold = 0.5
+
+> table(test$not.fully.paid,pred >= 0.5)
+   
+    FALSE TRUE
+  0  2400   13
+  1   456    4
+> # What is the accuracy of the logistic regression model?
+> (2400+4)/(2400+13+456+4)
+[1] 0.836756
+> #What is the accuracy of the baseline model? 
+> table(test$not.fully.paid)
+
+   0    1 
+2413  460 
+> 2413/(2413+460)
+[1] 0.8398886
+> # Now store predict probability in variable name predict.risk and add to test set.
+> test$predict.risk = pred
+> str(test)
+'data.frame':	2873 obs. of  15 variables:
+ $ credit.policy    : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ purpose          : Factor w/ 7 levels "all_other","credit_card",..: 2 3 3 3 1 3 1 2 7 2 ...
+ $ int.rate         : num  0.107 0.136 0.122 0.132 0.08 ...
+ $ installment      : num  228.2 366.9 84.1 253.6 188 ...
+ $ log.annual.inc   : num  11.1 10.4 10.2 11.8 11.2 ...
+ $ dti              : num  14.29 11.63 10 9.16 16.08 ...
+ $ fico             : int  707 682 707 662 772 662 772 797 712 682 ...
+ $ days.with.cr.line: num  2760 4710 2730 4298 4889 ...
+ $ revol.bal        : int  33623 3511 5630 5122 29797 4175 3660 6844 3534 43039 ...
+ $ revol.util       : num  76.7 25.6 23 18.2 23.2 51.5 6.8 14.4 54.4 93.4 ...
+ $ inq.last.6mths   : int  0 1 1 2 1 0 0 0 0 3 ...
+ $ delinq.2yrs      : int  0 0 0 1 0 1 0 0 0 0 ...
+ $ pub.rec          : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ not.fully.paid   : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ predict.risk     : num  0.0774 0.1715 0.1081 0.1012 0.0681 ...
+> #Use the ROCR package to compute the test set AUC
+> library(ROCR)
+> ROCRpred = prediction(pred,test$not.fully.paid)
+> ROCRperf = performance(ROCRpred,"tpr","fpr")
+> plot(ROCRperf,colorize =TRUE,print.cutoffs.at=seq(0,1,0.1),text.adj=c(-0.2,1.7))
+> as.numeric(performance(ROCRpred, "auc")@y.values)
+[1] 0.672249
+> # In order to evaluate the quality of an investment strategy.
+> # We need to compute c dollars in a loan with interest rate r for t years makes c * (exp(rt) - 1) 
+
+> test$profit = exp(test$int.rate*3)-1
+> str(test)
+'data.frame':	2873 obs. of  16 variables:
+ $ credit.policy    : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ purpose          : Factor w/ 7 levels "all_other","credit_card",..: 2 3 3 3 1 3 1 2 7 2 ...
+ $ int.rate         : num  0.107 0.136 0.122 0.132 0.08 ...
+ $ installment      : num  228.2 366.9 84.1 253.6 188 ...
+ $ log.annual.inc   : num  11.1 10.4 10.2 11.8 11.2 ...
+ $ dti              : num  14.29 11.63 10 9.16 16.08 ...
+ $ fico             : int  707 682 707 662 772 662 772 797 712 682 ...
+ $ days.with.cr.line: num  2760 4710 2730 4298 4889 ...
+ $ revol.bal        : int  33623 3511 5630 5122 29797 4175 3660 6844 3534 43039 ...
+ $ revol.util       : num  76.7 25.6 23 18.2 23.2 51.5 6.8 14.4 54.4 93.4 ...
+ $ inq.last.6mths   : int  0 1 1 2 1 0 0 0 0 3 ...
+ $ delinq.2yrs      : int  0 0 0 1 0 1 0 0 0 0 ...
+ $ pub.rec          : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ not.fully.paid   : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ predict.risk     : num  0.0774 0.1715 0.1081 0.1012 0.0681 ...
+ $ profit           : num  0.379 0.502 0.442 0.488 0.271 ...
+> # We then replace this value with -1 in the cases where the loan was not paid in full.
+> test$profit[test$not.fully.paid == 1] = -1
+> summary(test$profit)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+-1.0000  0.2858  0.4111  0.2094  0.4980  0.8895 
+> # What is the maximum profit of a $10 investment in any loan?
+> 0.8895*10
+[1] 8.895
+> # we will analyze an investment strategy in which the investor only purchases loans with a high interest rate (a rate of at least 15%)
+> high_interest = subset(test,int.rate >= 0.15)
+> # What is the average profit of a $1 investment in one of these high-interest loans?
+> summary(high_interest$profit)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+-1.0000 -1.0000  0.5992  0.2251  0.6380  0.8895
+> # Answer is  0.2251
+> # What proportion of the high-interest loans were not paid back in full?                                                     
+> table(high_interest$not.fully.paid)
+
+  0   1 
+327 110 
+> 100/(327+110)
+[1] 0.228833
+> # Answer is  0.228833
+> # we will determine the 100th smallest predicted probability of not paying in full by sorting the predicted risks in increasing order. 
+> # And selecting the 100th element of this sorted list.                                   
+> cutoff = sort(high_interest$predict.risk, decreasing=FALSE)[100]
+> selected_loans = subset(high_interest,predict.risk<=cutoff)
+> dim(selected_loans)
+[1] 100  16
+> summary(selected_loans)
+                                                   
+> table(selected_loans$not.fully.paid)
+
+ 0  1 
+81 19 
+> # How many of 100 selected loans were not paid back in full?
+> # Answer is 19
+> # What is the profit of the investor, who invested $1 in each of these 100 loans?
+> sum(selected_loans$profit)
+[1] 31.45921
